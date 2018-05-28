@@ -2,7 +2,7 @@
 <template>
 <div>
 <nav-header></nav-header>
-<nav-crumbs></nav-crumbs>
+<nav-crumbs><span>Goods List</span></nav-crumbs>
 
 <div class="accessory-result-page accessory-page">
   <div class="container">
@@ -30,7 +30,7 @@
           <ul>
             <li>
               <div class="pic">
-                <a href="#"><img src="/static/1.jpg" alt=""></a>
+                <a href="#"><img src="/static/img/1.jpg" alt=""></a>
               </div>
               <div class="main">
                 <div class="name">XX</div>
@@ -62,12 +62,30 @@ import './../assets/css/login.css'
 import NavHeader from '../components/navheader'
 import NavCrumbs from '../components/navcrumbs'
 import NavFooter from '../components/navfooter'
+import axios from 'axios'
 
 export default {
     components: {
         NavHeader,
         NavCrumbs,
         NavFooter
+    },
+    data() {
+        return {
+            goods: []
+        }
+    },
+    methods: {
+        getGoods() {
+            axios.get('/api').then((res) => {
+                this.goods = res.data.result;
+            }).catch(err => {
+                console.log("Something wrong when asking goods data")
+            })
+        }
+    },
+    mounted() {
+        this.getGoods()
     }
 }
 </script>
