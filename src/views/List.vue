@@ -28,13 +28,13 @@
       <div class="accessory-list-wrap">
         <div class="accessory-list col-4">
           <ul>
-            <li>
+            <li v-for="(item, index) in goods" v-bind:key="index">
               <div class="pic">
-                <a href="#"><img src="/static/img/1.jpg" alt=""></a>
+                <a href="#"><img v-bind:src="'/static/img/'+item.image" alt=""></a>
               </div>
               <div class="main">
-                <div class="name">XX</div>
-                <div class="price">XX</div>
+                <div class="name">{{item.name}}</div>
+                <div class="price">{{item.price}}</div>
                 <div class="btn-area">
                   <a href="javascript:;" class="btn btn--m">加入购物车</a>
                 </div>
@@ -78,7 +78,12 @@ export default {
     methods: {
         getGoods() {
             axios.get('/api').then((res) => {
-                this.goods = res.data.result;
+                this.goods = res.data.data;
+         
+                console.log("This goods loaded...")
+                for(item of this.goods) {
+                  console.log(item.name)
+                }
             }).catch(err => {
                 console.log("Something wrong when asking goods data")
             })
