@@ -22,7 +22,7 @@
         <div class="navbar-cart-container">
           <span class="navbar-cart-count"></span>
           <a class="navbar-link navbar-cart-link" href="/#/cart">
-            <svg class="navbar-cart-logo">
+            <svg class="navbar-cart-logo" width=38 height=32>
               <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
             </svg>
           </a>
