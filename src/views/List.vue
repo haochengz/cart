@@ -30,7 +30,7 @@
           <ul>
             <li v-for="(item, index) in goods" v-bind:key="index">
               <div class="pic">
-                <a href="#"><img v-bind:src="'/static/img/'+item.image" alt=""></a>
+                <a href="#"><img v-lazy="'/static/img/'+item.image" alt=""></a>
               </div>
               <div class="main">
                 <div class="name">{{item.name}}</div>

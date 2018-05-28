@@ -3,6 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import lazyLoad from 'vue-lazyload'
+
+Vue.use(lazyLoad, {
+  loading: '/static/loading/loading-bubbles.svg'
+})
 
 Vue.config.productionTip = false
 
