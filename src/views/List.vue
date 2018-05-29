@@ -95,15 +95,11 @@ export default {
     },
     methods: {
         getGoods() {
-            axios.get('/api').then((res) => {
-                this.goods = res.data.data;
-         
-                console.log("This goods loaded...")
-                for(item of this.goods) {
-                  console.log(item.name)
-                }
+            axios.get('/list').then((res) => {
+                this.goods = res.data.result.list;
             }).catch(err => {
                 console.log("Something wrong when asking goods data")
+                console.log(err)
             })
         },
         priceFilterClick(index) {
