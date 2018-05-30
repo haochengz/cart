@@ -41,6 +41,9 @@
               </div>
             </li>
           </ul>
+          <div class="loadMore" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+              ... Loading ...
+          </div>
         </div>
       </div>
     </div>
@@ -94,11 +97,12 @@ export default {
             sortingField: 'default',
             sortingFlag: false,
             page: 1,
-            pageSize: 8
+            pageSize: 8,
+            busy: true
         }
     },
     methods: {
-        getGoods() {
+        getGoods(append=false) {
             let params = {
                 page: this.page,
                 pageSize: this.pageSize,
@@ -108,7 +112,19 @@ export default {
             axios.get('/list', {
                 params: params
             }).then((res) => {
-                this.goods = res.data.result.list;
+                if(append){
+                    this.goods = this.goods.concat(res.data.result.list)
+                    if(res.data.result.count < this.pageSize){
+                        this.busy = true
+                    }
+                    else {
+                        this.busy = false
+                    }
+                }
+                else{
+                    this.goods = res.data.result.list
+                    this.busy = false
+                }
             }).catch(err => {
                 console.log("Something wrong when asking goods data")
                 console.log(err)
@@ -130,6 +146,13 @@ export default {
                 this.page = 1
                 this.getGoods()
             }
+        },
+        loadMore() {
+            this.busy = true
+            setTimeout(() => {
+                this.page++
+                this.getGoods(true)
+            }, 1000)
         },
         priceFilterClick(index) {
           this.priceChecked = index
@@ -153,3 +176,11 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.loadMore {
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+</style>

@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import lazyLoad from 'vue-lazyload'
+import infinite from 'vue-infinite-scroll'
+
+Vue.use(infinite)
 
 Vue.use(lazyLoad, {
   loading: '/static/loading/loading-bubbles.svg'
