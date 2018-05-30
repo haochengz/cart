@@ -42,7 +42,7 @@
             </li>
           </ul>
           <div class="loadMore" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-              ... Loading ...
+              <img src="/static/loading/loading-spinning-bubbles.svg" v-show="loadingImg">
           </div>
         </div>
       </div>
@@ -103,7 +103,8 @@ export default {
                 field: 'all',
                 starts: 0,
                 ends: 0
-            }
+            },
+            loadingImg: false
         }
     },
     methods: {
@@ -117,9 +118,11 @@ export default {
                 filterStarts: this.filter.starts,
                 filterEnds: this.filter.ends
             }
+            this.loadingImg = true
             axios.get('/list', {
                 params: params
             }).then((res) => {
+                this.loadingImg = false
                 if(append){
                     this.goods = this.goods.concat(res.data.result.list)
                     if(res.data.result.count < this.pageSize){
@@ -134,6 +137,7 @@ export default {
                     this.busy = false
                 }
             }).catch(err => {
+                loadingImg = false
                 console.log("Something wrong when asking goods data")
                 console.log(err)
             })
