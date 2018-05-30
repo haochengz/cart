@@ -137,7 +137,7 @@ export default {
                     this.busy = false
                 }
             }).catch(err => {
-                loadingImg = false
+                this.loadingImg = false
                 console.log("Something wrong when asking goods data")
                 console.log(err)
             })

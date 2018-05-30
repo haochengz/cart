@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const {db_con} = require('./../vars.js')
 
 let goods = require('../models/goods')
+let users = require('../models/user')
 
 mongoose.connect(db_con)
 
@@ -35,44 +36,59 @@ function paginator(page, pageSize, retriever) {
     return retriever.skip(skip).limit(pageSize)
 }
 
-router.get("/", (req, resp, next) => {
-    let sorting = parseInt(req.query.sorting)
-    let page = parseInt(req.query.page)
-    let pageSize = parseInt(req.query.pageSize)
-    let sortingField = req.query.sortingField
-    let findParams = {}
-    if(req.query.filterField == 'price'){
-        findParams = {
+function buildFilterParams(query){
+    if(query.filterField == 'price'){
+        return {
             price:{
-                $gte: parseInt(req.query.filterStarts),
-                $lt: parseInt(req.query.filterEnds)
+                $gte: parseInt(query.filterStarts),
+                $lt: parseInt(query.filterEnds)
             }
         }
     }
-    let raw_data = retrieveItems(findParams)
-    if(sortingField == 'price'){
-        raw_data = sortItems(sorting, raw_data)
+    else{
+        return {}
     }
-    let data = paginator(page, pageSize, raw_data)
+}
+
+function returnErrorJson(err, resp){
+    resp.json({
+        status: '1',
+        msg: err.message
+    })
+}
+
+function returnResult(doc, resp){
+    resp.json({
+        status: '0',
+        msg: 'success',
+        result: {
+            count: doc.length,
+            list: doc
+        }
+    })
+}
+
+router.get("/", (req, resp, next) => {
+    let raw_data = retrieveItems(buildFilterParams(req.query))
+    if(req.query.sortingField == 'price'){
+        raw_data = sortItems(parseInt(req.query.sorting), raw_data)
+    }
+    let data = paginator(
+        parseInt(req.query.page),
+        parseInt(req.query.pageSize),
+        raw_data
+    )
 
     data.exec((err, doc) => {
         if(err){
-            resp.json({
-                status: '1',
-                msg: err.message
-            })
+            returnErrorJson(err, resp)
         }
         else{
-            resp.json({
-                status: '0',
-                msg: 'Success',
-                result: {
-                    count: doc.length,
-                    list:doc
-                }
-            })
+            returnResult(doc, resp)
         }
     })
 })
+
+router.post("/addToCart", (req, resp, next) => {})
 
 module.exports = router
