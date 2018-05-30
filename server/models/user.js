@@ -13,9 +13,9 @@ module.exports = mongoose.model('users', new mongoose.Schema({
             "productPrice": Number,
             "productImg": String,
             "isSelected": Boolean,
-            "numbers": Number,
+            "number": Number,
         }
     ],
     "orders": Array,
     "address": Array
-}))
+}), 'users')

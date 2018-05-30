@@ -50,10 +50,18 @@ function buildFilterParams(query){
     }
 }
 
-function returnErrorJson(err, resp){
+function returnErrorJson(err, resp, debugLog=""){
     resp.json({
         status: '1',
-        msg: err.message
+        msg: err == null ? "" : err.message,
+        log: debugLog
+    })
+}
+
+function returnSuccessJson(msg, resp) {
+    resp.json({
+        status: '0',
+        msg: msg
     })
 }
 
@@ -66,6 +74,58 @@ function returnResult(doc, resp){
             list: doc
         }
     })
+}
+
+function retrieveProductFromDB(userId, productId, resp) {
+    goods.findOne({id: productId}, (err, product) => {
+        if(err){
+            returnErrorJson(err, resp, "Cannot find product by " + productId)
+        }
+        else{
+            if(product == null) {
+                returnErrorJson(null, resp, "Cannot find product by " + productId)
+            }
+            addToUserCart(product, userId, resp)
+        }
+    })
+}
+
+function addToUserCart(product, userId, resp){
+    users.findOne({id: userId}, (err, user) => {
+        if(err) {
+            returnErrorJson(err, resp, "Cannot find user by " + userId)
+        }
+        else{
+            if(user == null) {
+                returnErrorJson(null, resp, "Cannot find user by " + userId)
+            }
+            addItemToCart(product, user, resp)
+        }
+    })
+}
+
+function addItemToCart(product, user, resp) {
+    let flag = true
+    for(item of user.itemsInCart){
+        if(item.productId == product.id) {
+            flag = false
+            item.number += 1
+            user.save()
+            returnSuccessJson("Add one to exists item", resp)
+        }
+    }
+    if(flag){
+        user.itemsInCart.push({
+            productId: product.id,
+            productName: product.name,
+            productPrice: product.price,
+            productImg: product.img,
+            isSelected: false,
+            number: 1
+        })
+        user.save()
+        returnSuccessJson("Add new item to cart", resp)
+    }
 }
 
 router.get("/", (req, resp, next) => {
@@ -89,6 +149,11 @@ router.get("/", (req, resp, next) => {
     })
 })
 
-router.post("/addToCart", (req, resp, next) => {})
+router.put("/cart", (req, resp, next) => {
+    fakeUserId = "001"
+    userId = fakeUserId
+    productId = req.query.productId
+    retrieveProductFromDB(userId, productId, resp)
+})
 
 module.exports = router
