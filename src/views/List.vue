@@ -8,8 +8,8 @@
   <div class="container">
     <div class="filter-nav">
       <span class="sortby">Sort by:</span>
-      <a href="javascript:void(0)" class="default cur">Default</a>
-      <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+      <a href="javascript:void(0)" class="default" v-bind:class="sortingField == 'default' ? 'cur' : ''" @click="sortByDefault">Default</a>
+      <a href="javascript:void(0)" class="price" v-bind:class="sortingField == 'price' ? 'cur' : ''" @click="sortByPrice">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
       <a href="javascript:void(0)" class="filterby stopPop" @click="popFilter">Filter by</a>
     </div>
     <div class="accessory-result">
@@ -90,17 +90,46 @@ export default {
             ],
             priceChecked: "all",
             filterPop: false,
-            overLayFlag: false
+            overLayFlag: false,
+            sortingField: 'default',
+            sortingFlag: false,
+            page: 1,
+            pageSize: 8
         }
     },
     methods: {
         getGoods() {
-            axios.get('/list').then((res) => {
+            let params = {
+                page: this.page,
+                pageSize: this.pageSize,
+                sorting: (this.sortingFlag ? 1 : -1),
+                sortingField: this.sortingField
+            }
+            axios.get('/list', {
+                params: params
+            }).then((res) => {
                 this.goods = res.data.result.list;
             }).catch(err => {
                 console.log("Something wrong when asking goods data")
                 console.log(err)
             })
+        },
+        sortByPrice() {
+            if(this.sortingField === 'default'){
+                this.sortingField = 'price'
+            }
+            else{
+                this.sortingFlag = !this.sortingFlag
+            }
+            this.page = 1
+            this.getGoods()
+        },
+        sortByDefault() {
+            if(this.sortingField === 'price'){
+                this.sortingField = 'default'
+                this.page = 1
+                this.getGoods()
+            }
         },
         priceFilterClick(index) {
           this.priceChecked = index

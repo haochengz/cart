@@ -20,8 +20,35 @@ mongoose.connection.on("disconnected", () => {
     console.log("connection lost for some reason")
 })
 
+function retrieveItems(findParams){
+    return goods.find(findParams)
+}
+
+function sortItems(sorting, retriever){
+    return retriever.sort({
+        price: sorting
+    })
+}
+
+function paginator(page, pageSize, retriever) {
+    skip = (page - 1) * pageSize
+    return retriever.skip(skip).limit(pageSize)
+}
+
 router.get("/", (req, resp, next) => {
-    goods.find({}, (err, doc) => {
+    let sorting = parseInt(req.query.sorting)
+    let page = parseInt(req.query.page)
+    let pageSize = parseInt(req.query.pageSize)
+    let sortingField = req.query.sortingField
+    let findParams = {}
+
+    let raw_data = retrieveItems(findParams)
+    if(sortingField == 'price'){
+        raw_data = sortItems(sorting, raw_data)
+    }
+    data = paginator(page, pageSize, raw_data)
+
+    data.exec((err, doc) => {
         if(err){
             resp.json({
                 status: '1',
@@ -31,7 +58,7 @@ router.get("/", (req, resp, next) => {
         else{
             resp.json({
                 status: '0',
-                msg: '',
+                msg: 'Success',
                 result: {
                     count: doc.length,
                     list:doc
