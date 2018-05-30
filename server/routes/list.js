@@ -41,12 +41,19 @@ router.get("/", (req, resp, next) => {
     let pageSize = parseInt(req.query.pageSize)
     let sortingField = req.query.sortingField
     let findParams = {}
-
+    if(req.query.filterField == 'price'){
+        findParams = {
+            price:{
+                $gte: parseInt(req.query.filterStarts),
+                $lt: parseInt(req.query.filterEnds)
+            }
+        }
+    }
     let raw_data = retrieveItems(findParams)
     if(sortingField == 'price'){
         raw_data = sortItems(sorting, raw_data)
     }
-    data = paginator(page, pageSize, raw_data)
+    let data = paginator(page, pageSize, raw_data)
 
     data.exec((err, doc) => {
         if(err){

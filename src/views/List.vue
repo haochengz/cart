@@ -98,7 +98,12 @@ export default {
             sortingFlag: false,
             page: 1,
             pageSize: 8,
-            busy: true
+            busy: true,
+            filter: {
+                field: 'all',
+                starts: 0,
+                ends: 0
+            }
         }
     },
     methods: {
@@ -107,7 +112,10 @@ export default {
                 page: this.page,
                 pageSize: this.pageSize,
                 sorting: (this.sortingFlag ? 1 : -1),
-                sortingField: this.sortingField
+                sortingField: this.sortingField,
+                filterField: this.filter.field,
+                filterStarts: this.filter.starts,
+                filterEnds: this.filter.ends
             }
             axios.get('/list', {
                 params: params
@@ -155,12 +163,26 @@ export default {
             }, 1000)
         },
         priceFilterClick(index) {
-          this.priceChecked = index
-          this.closeFilter()
+            if(this.priceChecked != index){
+                this.page = 1
+                this.filter.field = 'price'
+                this.filter.starts = this.priceFilter[index].start
+                this.filter.ends = this.priceFilter[index].end
+                this.getGoods()
+            }
+            this.priceChecked = index
+            this.closeFilter()
         },
         priceFilterReset() {
-          this.priceChecked = 'all'
-          this.closeFilter()
+            if(this.priceChecked != 'all'){
+                this.page = 1
+                this.filter.field = 'all'
+                this.filter.starts = 0
+                this.filter.ends = 0
+                this.getGoods()
+            }
+            this.priceChecked = 'all'
+            this.closeFilter()
         },
         popFilter() {
           this.filterPop = true
