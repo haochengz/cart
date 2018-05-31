@@ -2,14 +2,14 @@
 // local mongodb host
 // user: dev, pwd: 123456
 
-dev_db_user = 'dev'
-dev_db_pwd = '123456'
-dev_db_host = '127.0.0.1'
-dev_db_port = '27017'
-dev_db_name = 'mall'
+const devdbuser = 'dev'
+const devdbpwd = '123456'
+const devdbhost = '127.0.0.1'
+const devdbport = '27017'
+const devdbname = 'mall'
 
-dev_db_con = `mongodb://${dev_db_user}:${dev_db_pwd}@${dev_db_host}:${dev_db_port}/${dev_db_name}`
+const devdbcon = `mongodb://${devdbuser}:${devdbpwd}@${devdbhost}:${devdbport}/${devdbname}`
 
-db_con = dev_db_con
+const dbcon = devdbcon
 
-module.exports.db_con = db_con
+module.exports.dbcon = dbcon
