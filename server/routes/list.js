@@ -152,7 +152,7 @@ router.get("/", (req, resp, next) => {
 router.put("/cart", (req, resp, next) => {
     fakeUserId = "001"
     userId = fakeUserId
-    productId = req.query.productId
+    productId = req.body.productId
     retrieveProductFromDB(userId, productId, resp)
 })
 

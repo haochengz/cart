@@ -36,7 +36,7 @@
                 <div class="name">{{item.name}}</div>
                 <div class="price">{{item.price}}</div>
                 <div class="btn-area">
-                  <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                  <a href="javascript:;" class="btn btn--m" @click="addCart(item.id)">加入购物车</a>
                 </div>
               </div>
             </li>
@@ -195,6 +195,20 @@ export default {
         closeFilter() {
           this.filterPop = false
           this.overLayFlag = false
+        },
+        addCart(productId){
+            axios.put("/list/cart", {
+                productId: productId
+            }).then(res => {
+                if(res.data.status === "0"){
+                    alert("Success")
+                }
+                else{
+                    alert("Status error " + res.data.msg)
+                }
+            }).catch(err => {
+                alert("Exception cause by framework " + err.message)
+            })
         }
     },
     mounted() {
