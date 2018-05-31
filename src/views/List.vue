@@ -69,158 +69,158 @@ import NavFooter from '../components/navfooter'
 import axios from 'axios'
 
 export default {
-    components: {
-        NavHeader,
-        NavCrumbs,
-        NavFooter
-    },
-    data() {
-        return {
-            goods: [],
-            priceFilter: [
-              {
-                start: '0.00',
-                end: '500.00'
-              },
-              {
-                start: '500.00',
-                end: '1000.00'
-              },
-              {
-                start: '1000.00',
-                end: '2000.00'
-              },
-            ],
-            priceChecked: "all",
-            filterPop: false,
-            overLayFlag: false,
-            sortingField: 'default',
-            sortingFlag: false,
-            page: 1,
-            pageSize: 8,
-            busy: true,
-            filter: {
-                field: 'all',
-                starts: 0,
-                ends: 0
-            },
-            loadingImg: false
-        }
-    },
-    methods: {
-        getGoods(append=false) {
-            let params = {
-                page: this.page,
-                pageSize: this.pageSize,
-                sorting: (this.sortingFlag ? 1 : -1),
-                sortingField: this.sortingField,
-                filterField: this.filter.field,
-                filterStarts: this.filter.starts,
-                filterEnds: this.filter.ends
-            }
-            this.loadingImg = true
-            axios.get('/list', {
-                params: params
-            }).then((res) => {
-                this.loadingImg = false
-                if(append){
-                    this.goods = this.goods.concat(res.data.result.list)
-                    if(res.data.result.count < this.pageSize){
-                        this.busy = true
-                    }
-                    else {
-                        this.busy = false
-                    }
-                }
-                else{
-                    this.goods = res.data.result.list
-                    this.busy = false
-                }
-            }).catch(err => {
-                this.loadingImg = false
-                console.log("Something wrong when asking goods data")
-                console.log(err)
-            })
+  components: {
+      NavHeader,
+      NavCrumbs,
+      NavFooter
+  },
+  data() {
+      return {
+        goods: [],
+        priceFilter: [
+          {
+          start: '0.00',
+          end: '500.00'
         },
-        sortByPrice() {
-            if(this.sortingField === 'default'){
-                this.sortingField = 'price'
-            }
-            else{
-                this.sortingFlag = !this.sortingFlag
-            }
-            this.page = 1
-            this.getGoods()
+        {
+        start: '500.00',
+        end: '1000.00'
         },
-        sortByDefault() {
-            if(this.sortingField === 'price'){
-                this.sortingField = 'default'
-                this.page = 1
-                this.getGoods()
-            }
+        {
+        start: '1000.00',
+        end: '2000.00'
         },
-        loadMore() {
-            this.busy = true
-            setTimeout(() => {
-                this.page++
-                this.getGoods(true)
-            }, 1000)
-        },
-        priceFilterClick(index) {
-            if(this.priceChecked != index){
-                this.page = 1
-                this.filter.field = 'price'
-                this.filter.starts = this.priceFilter[index].start
-                this.filter.ends = this.priceFilter[index].end
-                this.getGoods()
-            }
-            this.priceChecked = index
-            this.closeFilter()
-        },
-        priceFilterReset() {
-            if(this.priceChecked != 'all'){
-                this.page = 1
-                this.filter.field = 'all'
-                this.filter.starts = 0
-                this.filter.ends = 0
-                this.getGoods()
-            }
-            this.priceChecked = 'all'
-            this.closeFilter()
-        },
-        popFilter() {
-          this.filterPop = true
-          this.overLayFlag = true
-        },
-        closeFilter() {
-          this.filterPop = false
-          this.overLayFlag = false
-        },
-        addCart(productId){
-            axios.put("/list/cart", {
-                productId: productId
-            }).then(res => {
-                if(res.data.status === "0"){
-                    alert("Success")
-                }
-                else{
-                    alert("Status error " + res.data.msg)
-                }
-            }).catch(err => {
-                alert("Exception cause by framework " + err.message)
-            })
-        }
-    },
-    mounted() {
-        this.getGoods()
+      ],
+      priceChecked: "all",
+      filterPop: false,
+      overLayFlag: false,
+      sortingField: 'default',
+      sortingFlag: false,
+      page: 1,
+      pageSize: 8,
+      busy: true,
+      filter: {
+        field: 'all',
+          starts: 0,
+        ends: 0
+      },
+      loadingImg: false
     }
+  },
+  methods: {
+    getGoods(append=false) {
+      let params = {
+        page: this.page,
+        pageSize: this.pageSize,
+        sorting: (this.sortingFlag ? 1 : -1),
+        sortingField: this.sortingField,
+        filterField: this.filter.field,
+        filterStarts: this.filter.starts,
+        filterEnds: this.filter.ends
+      }
+      this.loadingImg = true
+      axios.get('/list', {
+        params: params
+      }).then((res) => {
+        this.loadingImg = false
+        if(append){
+          this.goods = this.goods.concat(res.data.result.list)
+          if(res.data.result.count < this.pageSize){
+            this.busy = true
+          }
+          else {
+            this.busy = false
+          }
+        }
+        else{
+          this.goods = res.data.result.list
+          this.busy = false
+        }
+      }).catch(err => {
+        this.loadingImg = false
+        console.log("Something wrong when asking goods data")
+        console.log(err)
+      })
+    },
+    sortByPrice() {
+      if(this.sortingField === 'default'){
+        this.sortingField = 'price'
+      }
+      else{
+        this.sortingFlag = !this.sortingFlag
+      }
+      this.page = 1
+      this.getGoods()
+    },
+    sortByDefault() {
+      if(this.sortingField === 'price'){
+        this.sortingField = 'default'
+        this.page = 1
+        this.getGoods()
+      }
+    },
+    loadMore() {
+      this.busy = true
+      setTimeout(() => {
+        this.page++
+        this.getGoods(true)
+      }, 1000)
+    },
+    priceFilterClick(index) {
+      if(this.priceChecked != index){
+        this.page = 1
+        this.filter.field = 'price'
+        this.filter.starts = this.priceFilter[index].start
+        this.filter.ends = this.priceFilter[index].end
+        this.getGoods()
+      }
+      this.priceChecked = index
+      this.closeFilter()
+    },
+    priceFilterReset() {
+      if(this.priceChecked != 'all'){
+        this.page = 1
+        this.filter.field = 'all'
+        this.filter.starts = 0
+        this.filter.ends = 0
+        this.getGoods()
+      }
+      this.priceChecked = 'all'
+      this.closeFilter()
+    },
+    popFilter() {
+      this.filterPop = true
+      this.overLayFlag = true
+    },
+    closeFilter() {
+      this.filterPop = false
+      this.overLayFlag = false
+    },
+    addCart(productId){
+      axios.put("/list/cart", {
+        productId: productId
+      }).then(res => {
+        if(res.data.status === "0"){
+          alert("Success")
+        }
+        else{
+          alert("Status error " + res.data.msg)
+        }
+      }).catch(err => {
+        alert("Exception cause by framework " + err.message)
+      })
+    }
+  },
+  mounted() {
+    this.getGoods()
+  }
 }
 </script>
 
 <style scoped>
 .loadMore {
-    height: 100px;
-    line-height: 100px;
-    text-align: center;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
 }
 </style>
