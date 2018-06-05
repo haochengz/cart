@@ -9,7 +9,7 @@
     <div class="filter-nav">
       <span class="sortby">Sort by:</span>
       <a href="javascript:void(0)" class="default" v-bind:class="sortingField == 'default' ? 'cur' : ''" @click="sortByDefault">Default</a>
-      <a href="javascript:void(0)" class="price" v-bind:class="sortingField == 'price' ? 'cur' : ''" @click="sortByPrice">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+      <a href="javascript:void(0)" class="price" v-bind:class="sortingField == 'price' ? 'cur' : ''" @click="sortByPrice">Price <svg class="icon icon-arrow-short" v-bind:class='{"sort-up":sortingFlag}' v-if='sortingField === "price"'><use xlmns:xlink:href="http://www.w3.org/1999/xlink" xlink:href="#icon-arrow-short"></use></svg></a>
       <a href="javascript:void(0)" class="filterby stopPop" @click="popFilter">Filter by</a>
     </div>
     <div class="accessory-result">
@@ -222,5 +222,9 @@ export default {
   height: 100px;
   line-height: 100px;
   text-align: center;
+}
+.sort-up {
+  transform: rotate(180deg);
+  transition: all .3s ease-out;
 }
 </style>
