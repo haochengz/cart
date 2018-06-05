@@ -87,10 +87,10 @@ export default {
         username: this.username,
         password: this.password
       }).then(resp => {
-        if (resp.data.status === 1) {
+        if (resp.data.status === '1') {
           this.errorTip = false
           this.loginModalFlag = false
-          this.user = resp.data.result.data
+          this.checkLogin()
         } else {
           this.errorMsg = resp.data.msg
           this.errorTip = true
@@ -101,10 +101,23 @@ export default {
       if (!this.user) {
       } else {
         axios.delete('/user/login').then(resp => {
-          this.user = null
+          this.checkLogin()
         })
       }
+    },
+    checkLogin() {
+      axios.get('/user/login').then(resp => {
+        const profile = resp.data
+        if (profile.status === '0') {
+          this.user = null
+        } else {
+          this.user = profile.result.data
+        }
+      })
     }
+  },
+  mounted() {
+    this.checkLogin()
   }
 }
 </script>
