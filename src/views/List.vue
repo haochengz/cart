@@ -9,7 +9,7 @@
     <div class="filter-nav">
       <span class="sortby">Sort by:</span>
       <a href="javascript:void(0)" class="default" v-bind:class="sortingField == 'default' ? 'cur' : ''" @click="sortByDefault">Default</a>
-      <a href="javascript:void(0)" class="price" v-bind:class="sortingField == 'price' ? 'cur' : ''" @click="sortByPrice">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+      <a href="javascript:void(0)" class="price" v-bind:class="sortingField == 'price' ? 'cur' : ''" @click="sortByPrice">Price <svg class="icon icon-arrow-short" v-bind:class='{"sort-up":sortingFlag}' v-if='sortingField === "price"'><use xlmns:xlink:href="http://www.w3.org/1999/xlink" xlink:href="#icon-arrow-short"></use></svg></a>
       <a href="javascript:void(0)" class="filterby stopPop" @click="popFilter">Filter by</a>
     </div>
     <div class="accessory-result">
@@ -49,7 +49,19 @@
     </div>
   </div>
 </div>
-
+<modal v-bind:mdShow='unlogin' v-on:close='closeModal()'>
+  <p slot='message'>Please login</p>
+  <div slot='btn'>
+    <button class='btn btn--m' @click='unlogin=false'>CLOSE</button>
+  </div>
+</modal>
+<modal v-bind:mdShow='addSuccess' v-on:close='closeModal()'>
+  <p slot='message'>Add new item to cart success</p>
+  <div slot='btn'>
+    <button class='btn btn--m' @click='closeModal'>Keep Shopping</button>
+    <router-link class='btn btn--m' to='/cart'>Goto register</router-link>
+  </div>
+</modal>
 <div class="md-overlay" v-show="overLayFlag" @click="closeFilter"></div>
 <nav-footer></nav-footer>
 </div>
@@ -66,13 +78,15 @@ import './../assets/css/login.css'
 import NavHeader from '../components/navheader'
 import NavCrumbs from '../components/navcrumbs'
 import NavFooter from '../components/navfooter'
+import Modal from '../components/modal'
 import axios from 'axios'
 
 export default {
   components: {
       NavHeader,
       NavCrumbs,
-      NavFooter
+      NavFooter,
+      Modal
   },
   data() {
       return {
@@ -92,10 +106,12 @@ export default {
         },
       ],
       priceChecked: "all",
+      unlogin: false,
       filterPop: false,
       overLayFlag: false,
       sortingField: 'default',
       sortingFlag: false,
+      addSuccess: false,
       page: 1,
       pageSize: 8,
       busy: true,
@@ -200,15 +216,24 @@ export default {
       axios.put("/list/cart", {
         productId: productId
       }).then(res => {
+        console.log('Response from server: ')
+        console.log(res.data.status)
         if(res.data.status === "0"){
-          alert("Success")
+          console.log("Going to error branch")
+          this.unlogin = true
+          this.addSuccess = false
         }
         else{
-          alert("Status error " + res.data.msg)
+          this.unlogin = false
+          this.addSuccess = true
         }
       }).catch(err => {
         alert("Exception cause by framework " + err.message)
       })
+    },
+    closeModal() {
+      this.unlogin = false
+      this.addSuccess = false
     }
   },
   mounted() {
@@ -222,5 +247,9 @@ export default {
   height: 100px;
   line-height: 100px;
   text-align: center;
+}
+.sort-up {
+  transform: rotate(180deg);
+  transition: all .3s ease-out;
 }
 </style>
