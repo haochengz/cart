@@ -83,7 +83,7 @@ export default {
         console.log('Cannot leave username or password blank')
         this.errorTip = true
       }
-      axios.post('/user/login', {
+      axios.put('/user/login', {
         username: this.username,
         password: this.password
       }).then(resp => {

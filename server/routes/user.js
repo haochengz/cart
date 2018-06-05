@@ -4,7 +4,7 @@ var router = express.Router()
 
 let users = require('../models/user')
 
-router.post('/login', (req, res, next) => {
+router.put('/login', (req, res, next) => {
   console.log('Receive request, check the parameters')
   console.log(req.body.username + ' ' + req.body.password)
   let username = req.body.username
