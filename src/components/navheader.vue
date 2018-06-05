@@ -105,7 +105,7 @@ export default {
         })
       }
     },
-    checkLogin() {
+    checkLogin () {
       axios.get('/user/login').then(resp => {
         const profile = resp.data
         if (profile.status === '0') {
@@ -116,7 +116,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.checkLogin()
   }
 }

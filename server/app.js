@@ -21,8 +21,26 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/list', listRouter)
 app.use('/user', userRouter)
+
+// catch unlogin
+app.use(function (req, res, next) {
+  const userId = req.cookies.userId
+  console.log('DEBUG USER: ' + userId)
+  if (userId) {
+    next()
+  } else {
+    console.log('DEBUG: ' + req.path)
+    if (req.path === '/list/cart') {
+      res.json({
+        status: '0',
+        msg: 'Please login before adding stuff to your cart',
+        result: ''
+      })
+    }
+  }
+})
+app.use('/list', listRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
