@@ -37,6 +37,8 @@ app.use(function (req, res, next) {
         msg: 'Please login before adding stuff to your cart',
         result: ''
       })
+    } else {
+      next()
     }
   }
 })

@@ -59,7 +59,7 @@ function returnErrorJson (err, resp, debugLog = '') {
 
 function returnSuccessJson (msg, resp) {
   resp.json({
-    status: '0',
+    status: '1',
     msg: msg
   })
 }
@@ -89,7 +89,7 @@ function retrieveProductFromDB (userId, productId, resp) {
 }
 
 function addToUserCart (product, userId, resp) {
-  users.findOne({id: userId}, (err, user) => {
+  users.findOne({_id: userId}, (err, user) => {
     if (err) {
       returnErrorJson(err, resp, 'Cannot find user by ' + userId)
     } else {
@@ -146,8 +146,7 @@ router.get('/', (req, resp, next) => {
 })
 
 router.put('/cart', (req, resp, next) => {
-  let fakeUserId = '001'
-  let userId = fakeUserId
+  let userId = req.cookies.userId
   let productId = req.body.productId
   retrieveProductFromDB(userId, productId, resp)
 })
