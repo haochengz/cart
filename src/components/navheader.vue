@@ -39,7 +39,7 @@
         <div class="md-content">
           <div class="confirm-tips">
             <div class="error-wrap">
-              <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
+              <span class="error error-show" v-show="errorTip">{{errorMsg}}</span>
             </div>
             <ul>
               <li class="regi_form_input">
@@ -63,7 +63,6 @@
 </template>
 
 <script>
-
 import '../assets/css/login.css'
 import axios from 'axios'
 export default {
@@ -71,21 +70,28 @@ export default {
     return {
       username: '',
       password: '',
-      errorTips: false,
+      errorTip: false,
+      errorMsg: '',
       loginModalFlag: false
     }
   },
   methods: {
     login () {
-      axios.post('/user', {
+      if (!this.username || !this.password) {
+        this.errorMsg = '用户名或密码不能为空'
+        console.log('Cannot leave username or password blank')
+        this.errorTip = true
+      }
+      axios.post('/user/login', {
         username: this.username,
         password: this.password
       }).then(res => {
-        if (res.data.status === '0') {
-          alert('SUCCESS')
+        if (res.data.status === 1) {
+          this.errorTip = false
+          this.loginModalFlag = false
         } else {
-          alert('Something went wrong')
-          alert(res.data.msg)
+          this.errorMsg = res.data.msg
+          this.errorTip = true
         }
       })
     }
