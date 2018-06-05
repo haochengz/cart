@@ -43,4 +43,16 @@ router.post('/login', (req, res, next) => {
   })
 })
 
+router.delete('/login', (req, resp, next) => {
+  resp.cookie('userId', '', {
+    path: '/',
+    maxAge: -1
+  })
+  // TODO: quit session
+  resp.json({
+    status: 1,
+    msg: 'success'
+  })
+})
+
 module.exports = router

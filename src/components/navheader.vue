@@ -16,9 +16,9 @@
     <div class="navbar-right-container" style="display: flex;">
       <div class="navbar-menu-container">
         <!--<a href="/" class="navbar-link">我的账户</a>-->
-        <span class="navbar-link"></span>
-        <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true">Login</a>
-        <a href="javascript:void(0)" class="navbar-link">Logout</a>
+        <span class="navbar-link" v-if='user'>{{user.username}}</span>
+        <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if='!user'>Login</a>
+        <a href="javascript:void(0)" class="navbar-link" v-if='user' @click='logout'>Logout</a>
         <div class="navbar-cart-container">
           <span class="navbar-cart-count"></span>
           <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -72,6 +72,7 @@ export default {
       password: '',
       errorTip: false,
       errorMsg: '',
+      user: null,
       loginModalFlag: false
     }
   },
@@ -85,15 +86,24 @@ export default {
       axios.post('/user/login', {
         username: this.username,
         password: this.password
-      }).then(res => {
-        if (res.data.status === 1) {
+      }).then(resp => {
+        if (resp.data.status === 1) {
           this.errorTip = false
           this.loginModalFlag = false
+          this.user = resp.data.result.data
         } else {
-          this.errorMsg = res.data.msg
+          this.errorMsg = resp.data.msg
           this.errorTip = true
         }
       })
+    },
+    logout () {
+      if (!this.user) {
+      } else {
+        axios.delete('/user/login').then(resp => {
+          this.user = null
+        })
+      }
     }
   }
 }
