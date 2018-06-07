@@ -59,10 +59,10 @@
                     </ul>
                   </div>
                   <ul class="cart-item-list">
-                    <li v-for="(item, index) in cartList" v-bind:key="index">
+                    <li v-for="item in cartList" :key="item.productId">
                       <div class="cart-tab-1">
                         <div class="cart-item-check">
-                          <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
+                          <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('check',item)">
                             <svg class="icon icon-ok">
                               <use xlink:href="#icon-ok"></use>
                             </svg>
@@ -82,7 +82,7 @@
                         <div class="item-quantity">
                           <div class="select-self select-self-open">
                             <div class="select-self-area">
-                              <a class="input-sub" @click="editCart('minu',item)">-</a>
+                              <a class="input-sub" @click="editCart('minus',item)">-</a>
                               <span class="select-ipt">{{item.number}}</span>
                               <a class="input-add" @click="editCart('add',item)">+</a>
                             </div>
@@ -142,10 +142,7 @@
 </template>
 
 <script>
-import './../assets/css/base.css'
-import './../assets/css/product.css'
 import './../assets/css/checkout.css'
-import './../assets/css/login.css'
 
 import NavHeader from '../components/navheader'
 import NavCrumbs from '../components/navcrumbs'
@@ -177,8 +174,35 @@ export default {
       }).catch(err => {
         console.log(err.message)
       })
+    },
+    editCart (op, item) {
+      switch (op) {
+        case 'minus':
+          if (item.number === 1) {
+            console.log('Cannot be any lesser')
+            return
+          } else {
+            item.number--
+          }
+          break
+        case 'add':
+          item.number++
+          break
+        case 'check':
+          item.isSelected = true
+          break
+      }
+      axios.patch('/list/cart', {
+        item: item
+      }).then(res => {
+        console.log('status ', res.data.status)
+        console.log(this.cartList[1].number)
+      }).catch(err => {
+        console.log(err.message)
+      })
     }
   },
+  delCart () {},
   mounted () {
     this.getCartList()
   }

@@ -177,4 +177,21 @@ router.get('/cart', (req, resp, next) => {
   })
 })
 
+router.patch('/cart', (req, resp, next) => {
+  const userId = req.cookies.userId
+  const item = req.body.item
+
+  users.update({
+    '_id': userId,
+    'itemsInCart.productId': item.productId
+  }, {
+    'itemsInCart.$.number': item.number
+  }, (err, doc) => {
+    if (err) returnErrorJson(err, resp)
+    else if (!doc) returnErrorJson('Cannot find user', resp)
+
+    returnSuccessJson('Success', resp)
+  })
+})
+
 module.exports = router
