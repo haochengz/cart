@@ -112,11 +112,12 @@ function addItemToCart (product, user, resp) {
     }
   }
   if (flag) {
+    console.log('Product Image: ' + product.image)
     user.itemsInCart.push({
       productId: product.id,
       productName: product.name,
       productPrice: product.price,
-      productImg: product.img,
+      productImg: product.image,
       isSelected: false,
       number: 1
     })
@@ -149,6 +150,31 @@ router.put('/cart', (req, resp, next) => {
   let userId = req.cookies.userId
   let productId = req.body.productId
   retrieveProductFromDB(userId, productId, resp)
+})
+
+router.get('/cart', (req, resp, next) => {
+  const userId = req.cookies.userId
+  if (!userId) throw Error('Cannot determined the user')
+
+  users.findOne({
+    _id: userId
+  }, (err, doc) => {
+    if (err) {
+      returnErrorJson(err, resp)
+    } else {
+      if (!doc) {
+        returnErrorJson('Cannot retrieve any user from user id', resp)
+      } else {
+        resp.json({
+          status: '1',
+          result: {
+            count: 1,
+            data: doc.itemsInCart
+          }
+        })
+      }
+    }
+  })
 })
 
 module.exports = router
