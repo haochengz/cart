@@ -103,7 +103,7 @@ export default {
         if (resp.data.status === '1') {
           this.errorTip = false
           this.loginModalFlag = false
-          this.checkLogin()
+          location.reload()
         } else {
           this.errorMsg = resp.data.msg
           this.errorTip = true
