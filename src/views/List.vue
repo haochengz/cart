@@ -89,20 +89,20 @@ export default {
       Modal
   },
   data() {
-      return {
-        goods: [],
-        priceFilter: [
-          {
+    return {
+      goods: [],
+      priceFilter: [
+        {
           start: '0.00',
           end: '500.00'
         },
         {
-        start: '500.00',
-        end: '1000.00'
+          start: '500.00',
+          end: '1000.00'
         },
         {
-        start: '1000.00',
-        end: '2000.00'
+          start: '1000.00',
+          end: '2000.00'
         },
       ],
       priceChecked: "all",
