@@ -194,4 +194,26 @@ router.patch('/cart', (req, resp, next) => {
   })
 })
 
+router.delete('/cart', (req, resp, next) => {
+  const userId = req.cookies.userId
+  const itemId = req.query.itemId
+  console.log('User: ' + userId + ' item:\n' + itemId)
+
+  users.update({
+    _id: userId
+  }, {
+    $pull: {
+      itemsInCart: {
+        productId: itemId
+      }
+    }
+  }, (err, doc) => {
+    if (err) {
+      // error occurs
+    } else {
+      returnSuccessJson('delete success', resp)
+    }
+  })
+})
+
 module.exports = router

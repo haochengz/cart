@@ -159,7 +159,11 @@ export default {
   },
   data () {
     return {
-      cartList: null
+      cartList: null,
+      modalConfirm: false,
+      checkAllFlag: null,
+      totalPrice: 0,
+      wait_del: null
     }
   },
   methods: {
@@ -200,9 +204,41 @@ export default {
       }).catch(err => {
         console.log(err.message)
       })
-    }
+    },
+    delCart () {
+      axios.delete('/list/cart', {
+        params: {
+          itemId: this.wait_del.productId
+        }
+      }).then(res => {
+        if (res.data.status === '1') {
+          this.closeModal()
+          this.getCartList()
+        } else {
+          console.log('delete item ' + this.wait_del + ' failed')
+          this.closeModal()
+        }
+      }).catch(err => {
+        if (err) {
+          console.log('delete item ' + this.wait_del + ' failed')
+          console.log(err)
+          this.closeModal()
+        }
+      })
+    },
+    delCartConfirm (item) {
+      this.wait_del = item
+      this.modalConfirm = true
+    },
+    closeModal () {
+      this.wait_del = null
+      this.modalConfirm = false
+    },
+    toggleCheckAll () {},
+    checkedCount () {},
+    checkOut () {}
+
   },
-  delCart () {},
   mounted () {
     this.getCartList()
   }
