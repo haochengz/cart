@@ -149,6 +149,7 @@ import NavCrumbs from '../components/navcrumbs'
 import NavFooter from '../components/navfooter'
 import Modal from '../components/modal'
 import axios from 'axios'
+import {currency} from '../utils/currency'
 
 export default {
   components: {
@@ -162,7 +163,6 @@ export default {
       cartList: null,
       modalConfirm: false,
       checkAllFlag: false,
-      totalPrice: 0,
       wait_del: null
     }
   },
@@ -259,7 +259,6 @@ export default {
         if (!item.isSelected) {
           console.log('LOG: ' + item.productName + ' is not selected')
           this.checkAllFlag = false
-          return
         }
       })
     },
@@ -268,6 +267,20 @@ export default {
   },
   mounted () {
     this.getCartList()
+  },
+  filters: {
+    currency: currency
+  },
+  computed: {
+    totalPrice () {
+      let total = 0
+      this.cartList.forEach(item => {
+        if (item.isSelected) {
+          total += (item.productPrice * item.number)
+        }
+      })
+      return total
+    }
   }
 }
 </script>
