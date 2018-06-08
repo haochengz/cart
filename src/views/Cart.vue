@@ -62,7 +62,7 @@
                     <li v-for="item in cartList" :key="item.productId">
                       <div class="cart-tab-1">
                         <div class="cart-item-check">
-                          <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('check',item)">
+                          <a href="javascript:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.isSelected==true}" @click="editCart('check',item)">
                             <svg class="icon icon-ok">
                               <use xlink:href="#icon-ok"></use>
                             </svg>
@@ -109,7 +109,7 @@
                 <div class="cart-foot-inner">
                   <div class="cart-foot-l">
                     <div class="item-all-check">
-                      <a href="javascipt:;" @click="toggleCheckAll">
+                      <a href="javascript:;" @click="toggleCheckAll">
                         <span class="checkbox-btn item-check-btn" v-bind:class="{'check':checkAllFlag}">
                             <svg class="icon icon-ok"><use xlink:href="#icon-ok"/></svg>
                         </span>
@@ -161,7 +161,7 @@ export default {
     return {
       cartList: null,
       modalConfirm: false,
-      checkAllFlag: null,
+      checkAllFlag: false,
       totalPrice: 0,
       wait_del: null
     }
@@ -174,6 +174,7 @@ export default {
           // Something bad
         } else {
           this.cartList = data.result.data
+          this.getToggleStatus()
         }
       }).catch(err => {
         console.log(err.message)
@@ -193,7 +194,13 @@ export default {
           item.number++
           break
         case 'check':
+          item.isSelected = !item.isSelected
+          break
+        case 'checkAll':
           item.isSelected = true
+          break
+        case 'uncheckAll':
+          item.isSelected = false
           break
       }
       axios.patch('/list/cart', {
@@ -201,6 +208,7 @@ export default {
       }).then(res => {
         console.log('status ', res.data.status)
         console.log(this.cartList[1].number)
+        this.getToggleStatus()
       }).catch(err => {
         console.log(err.message)
       })
@@ -234,10 +242,29 @@ export default {
       this.wait_del = null
       this.modalConfirm = false
     },
-    toggleCheckAll () {},
+    toggleCheckAll () {
+      this.checkAllFlag = !this.checkAllFlag
+      this.cartList.forEach(item => {
+        if (this.checkAllFlag) {
+          this.editCart('checkAll', item)
+        } else {
+          this.editCart('uncheckAll', item)
+        }
+      })
+    },
+    getToggleStatus () {
+      this.checkAllFlag = true
+      this.cartList.forEach(item => {
+        console.log('LOG: ' + item.productName)
+        if (!item.isSelected) {
+          console.log('LOG: ' + item.productName + ' is not selected')
+          this.checkAllFlag = false
+          return
+        }
+      })
+    },
     checkedCount () {},
     checkOut () {}
-
   },
   mounted () {
     this.getCartList()

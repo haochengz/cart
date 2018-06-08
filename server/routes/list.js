@@ -146,12 +146,14 @@ router.get('/', (req, resp, next) => {
   })
 })
 
+// add new item to cart
 router.put('/cart', (req, resp, next) => {
   let userId = req.cookies.userId
   let productId = req.body.productId
   retrieveProductFromDB(userId, productId, resp)
 })
 
+// get all items in cart
 router.get('/cart', (req, resp, next) => {
   const userId = req.cookies.userId
   if (!userId) throw Error('Cannot determined the user')
@@ -177,6 +179,7 @@ router.get('/cart', (req, resp, next) => {
   })
 })
 
+// modify the quantity or other properties of the item in cart
 router.patch('/cart', (req, resp, next) => {
   const userId = req.cookies.userId
   const item = req.body.item
@@ -185,7 +188,8 @@ router.patch('/cart', (req, resp, next) => {
     '_id': userId,
     'itemsInCart.productId': item.productId
   }, {
-    'itemsInCart.$.number': item.number
+    'itemsInCart.$.number': item.number,
+    'itemsInCart.$.isSelected': item.isSelected
   }, (err, doc) => {
     if (err) returnErrorJson(err, resp)
     else if (!doc) returnErrorJson('Cannot find user', resp)
@@ -194,6 +198,7 @@ router.patch('/cart', (req, resp, next) => {
   })
 })
 
+// delete a item from cart
 router.delete('/cart', (req, resp, next) => {
   const userId = req.cookies.userId
   const itemId = req.query.itemId
@@ -209,11 +214,15 @@ router.delete('/cart', (req, resp, next) => {
     }
   }, (err, doc) => {
     if (err) {
-      // error occurs
+      console.log('Error occurs when update the item in cart')
+      console.log(err.message)
     } else {
       returnSuccessJson('delete success', resp)
     }
   })
 })
+
+// check out all items in cart
+router.post('/cart', (req, resp, next) => {})
 
 module.exports = router
